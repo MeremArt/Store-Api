@@ -1,13 +1,13 @@
-const product = require("../models/product");
-
-const getAllProductsStatic = async (req, res) => {
+import { Request, Response } from "express";
+import product from `../models/product`
+const getAllProductsStatic = async (req:Request, res:Response): Promise<void> => {
   const products = await product.find({}).sort(`-name`);
   res.status(200).json({ products, nbHits: products.length });
 };
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req:Request, res:Response): Promise <void> => {
   const { featured, company, name, sort, fields, numericFilters } = req.query;
-  const queryObject = {};
+  const queryObject:any = {};
 
   if (featured) {
     queryObject.featured = featured === `true` ? true : false;
@@ -24,17 +24,17 @@ const getAllProducts = async (req, res) => {
   let result = await product.find(queryObject);
   // sort
   if (sort) {
-    const sortList = sort.split(",").join(" ");
+    const sortList = (sort as string).split(",").join(" ");
     result = result.sort(sortList);
   } else {
     result = result.sort(`createdAt`);
   }
   if (fields) {
-    const fieldsList = fields.split(",").join(" ");
+    const fieldsList = (fields as string).split(",").join(" ");
     result = result.select(fieldsList);
   }
   if (numericFilters) {
-    const operatorMap = {
+    const operatorMap: Record<string,string> = {
       ">": "$gt",
       ">=": "$gte",
       "=": "$eq",
@@ -42,17 +42,18 @@ const getAllProducts = async (req, res) => {
       "<=": "$lte",
     };
     const regEx = /\b(<|>|>=|=|<|<=)\b/g;
-    let filters = numericFilters.replace(
+    let filters = (numericFilters as string).replace(
       regEx,
       (match) => `-${operatorMap[match]}-`
     );
     const options = ["price", "rating"];
-    filters = filters.split(",").forEach((item) => {
+    filters = filters.split(",").map((item:string) => {
       const [field, operator, value] = item.split("-");
       if (options.includes(field)) {
         queryObject[field] = { [operator]: Number(value) };
       }
-    });
+      return item 
+    }).join(",");
   }
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
@@ -62,7 +63,4 @@ const getAllProducts = async (req, res) => {
   res.status(200).json({ products, nbHits: products.length });
 };
 
-module.exports = {
-  getAllProductsStatic,
-  getAllProducts,
-};
+export { getAllProductsStatic, getAllProducts };
