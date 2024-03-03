@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { getAllProductsStatic, getAllProducts } from "../controllers/products";
+
+import {
+  getAllProductsStatic as getAllProductsStaticController,
+  getAllProducts as getAllProductsController,
+} from "../controllers/products";
+
+// Use aliases to avoid conflicts
 
 const router = Router();
 

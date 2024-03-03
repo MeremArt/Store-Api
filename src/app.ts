@@ -28,13 +28,15 @@ app.use(`/api/v1/products`, productRouter);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
-const port = process.env.Port || 8000;
+const port = process.env.PORT || 8000;
 
-const start = async () => {
+const start = async (): Promise<void> => {
   try {
     await connectDB(process.env.MONGO_URI as string);
     // connect db
-    app.listen(port, console.log(`Server is listening ${port}...`));
+    app.listen(port, () => {
+      console.log(`Server is listening ${port}...`);
+    });
   } catch (error) {
     console.log(error);
   }

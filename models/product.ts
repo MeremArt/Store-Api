@@ -41,6 +41,6 @@ const productSchema: Schema<IProduct> = new Schema({
   },
 });
 
-const Product = model<IProduct>("Product", productSchema);
+const product = model<IProduct>("Product", productSchema);
 
-export default Product;
+export default product;
