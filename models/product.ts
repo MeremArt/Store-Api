@@ -1,6 +1,15 @@
-const mongoose = require(`mongoose`);
+import { Schema, Document, model } from "mongoose";
 
-const productSchema = new mongoose.Schema({
+interface IProduct extends Document {
+  name: string;
+  price: number;
+  featured: boolean;
+  rating: number;
+  createdAt: Date;
+  company: "ikea" | "liddy" | "caressa" | "marcos";
+}
+
+const productSchema: Schema<IProduct> = new Schema({
   name: {
     type: String,
     required: [true, "must provide name"],
@@ -21,7 +30,7 @@ const productSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
   company: {
     type: String,
@@ -29,8 +38,9 @@ const productSchema = new mongoose.Schema({
       values: ["ikea", "liddy", "caressa", "marcos"],
       message: "{VALUE} is not supported",
     },
-    // enum: ['ikea', 'liddy', 'caressa', 'marcos'],
   },
 });
 
-module.exports = mongoose.model("Product", productSchema);
+const Product = model<IProduct>("Product", productSchema);
+
+export default Product;
